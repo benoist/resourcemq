@@ -1,5 +1,5 @@
 require "resourcemq/version"
 
-module Resourcemq
+module ResourceMQ
   # Your code goes here...
 end

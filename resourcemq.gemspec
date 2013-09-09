@@ -5,7 +5,7 @@ require 'resourcemq/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "resourcemq"
-  spec.version       = Resourcemq::VERSION
+  spec.version       = ResourceMQ::VERSION
   spec.authors       = ["Benoist"]
   spec.email         = ["benoist.claassen@gmail.com"]
   spec.description   = %q{TODO: Write a gem description}

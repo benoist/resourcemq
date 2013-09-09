@@ -21,7 +21,7 @@ module ResourceMQ
     private
 
     def header_klass
-      "#{@resource.camelize}Header".constantize
+      "#{@resource.to_s.camelize}Header".safe_constantize || Hash
     end
   end
 end

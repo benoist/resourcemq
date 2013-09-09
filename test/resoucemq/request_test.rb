@@ -23,4 +23,11 @@ class RequestTest < Minitest::Unit::TestCase
     refute_respond_to request.headers, :non_existing
   end
 
+  def test_headers
+    request = ResourceMQ::Request.new
+    assert_instance_of Hash, request.headers
+    request = ResourceMQ::Request.new(resource: 'products')
+    assert_instance_of ProductsHeader, request.headers
+  end
+
 end

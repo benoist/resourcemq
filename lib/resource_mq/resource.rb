@@ -23,7 +23,7 @@ module ResourceMQ
       end
 
       def collection_responses
-        @collection_resposnes ||= {}
+        @collection_responses ||= {}
       end
     end
 

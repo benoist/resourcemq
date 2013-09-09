@@ -1,0 +1,45 @@
+{
+  "RSpec": {
+    "coverage": {
+      "/Users/bclaassen/Dropbox/rails/resourcemq/lib/resource_mq.rb": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        null,
+        1,
+        1,
+        null,
+        1,
+        1,
+        null,
+        1,
+        1,
+        null,
+        null,
+        1,
+        1,
+        1,
+        null
+      ],
+      "/Users/bclaassen/Dropbox/rails/resourcemq/lib/resource_mq/service/base.rb": [
+        1,
+        1,
+        1,
+        1,
+        null,
+        1,
+        1,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "timestamp": 1376665343
+  }
+}

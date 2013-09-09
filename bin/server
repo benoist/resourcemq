@@ -1,8 +1,0 @@
-#!/usr/bin/env ruby
-
-lib = File.expand_path('../../lib', __FILE__)
-$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-
-require File.expand_path("../../spec/dummy/config/boot", __FILE__)
-
-ResourceMQ::Server.new.run

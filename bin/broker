@@ -1,4 +1,0 @@
-#!/usr/bin/env ruby
-require 'librmdp'
-
-Majordomo::Broker.new.mediate

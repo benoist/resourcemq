@@ -1,6 +1,18 @@
 require 'test_helper'
 
 module Controller
+  class ProductModel< Struct.new(:name, :description)
+    def attributes
+      {name: name, description: description}
+    end
+  end
+
+  class Product
+    include ResourceMQ::Message
+
+    attribute :name, String
+  end
+
   class Products
     include ResourceMQ::Message
 
@@ -37,8 +49,17 @@ module Controller
       assert_equal @response.status, 200
     end
 
-    def test_respond_with
-      #@controller.send(:respond_with, )
+    def test_respond_with_attributes
+      @response.message_klass = Products
+      @controller.send(:respond_with, page: 1, total: 1)
+      assert_equal @response.message.page, 1
+      assert_equal @response.message.total, 1
+    end
+
+    def test_respond_with_model
+      @response.message_klass = Product
+      @controller.send(:respond_with, ProductModel.new('name', 'description'))
+      assert_equal @response.message.name, 'name'
     end
   end
 end

@@ -2,12 +2,16 @@ PATH
   remote: .
   specs:
     resourcemq (0.0.1)
+      activemodel (~> 4.0)
       activesupport (~> 4.0)
       virtus (~> 0.5)
 
 GEM
   remote: https://rubygems.org/
   specs:
+    activemodel (4.0.0)
+      activesupport (= 4.0.0)
+      builder (~> 3.1.0)
     activesupport (4.0.0)
       i18n (~> 0.6, >= 0.6.4)
       minitest (~> 4.2)
@@ -17,7 +21,7 @@ GEM
     ansi (1.4.3)
     atomic (1.1.13)
     backports (3.3.3)
-    builder (3.2.2)
+    builder (3.1.4)
     descendants_tracker (0.0.1)
     hashie (2.0.5)
     i18n (0.6.5)
@@ -27,7 +31,7 @@ GEM
       builder
       minitest (>= 2.12, < 5.0)
       powerbar
-    multi_json (1.7.9)
+    multi_json (1.8.0)
     powerbar (1.0.11)
       ansi (~> 1.4.0)
       hashie (>= 1.1.0)

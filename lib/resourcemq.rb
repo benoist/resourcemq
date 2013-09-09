@@ -8,6 +8,7 @@ require "active_support/dependencies/autoload"
 require "active_support/core_ext/module/delegation"
 require "virtus"
 require "forwardable"
+require 'active_model'
 
 
 module ResourceMQ

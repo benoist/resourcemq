@@ -1,6 +1,7 @@
 module ResourceMQ
   class Resource
     include Virtus
+    include ActiveModel::Model
 
     class << self
       def resources(resource_name, &block)
@@ -26,6 +27,7 @@ module ResourceMQ
         @collection_responses ||= {}
       end
     end
+
 
   end
 end

@@ -1,8 +1,6 @@
 require 'test_helper'
 
-class MessageDummy
-  include ResourceMQ::Message
-
+class MessageDummy < ResourceMQ::Message
   attribute :name, String
   has_many :tags, String
 

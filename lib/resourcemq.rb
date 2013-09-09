@@ -13,5 +13,7 @@ require "forwardable"
 module ResourceMQ
   extend ActiveSupport::Autoload
 
+  autoload :Request
   autoload :Message
+  autoload :Response
 end

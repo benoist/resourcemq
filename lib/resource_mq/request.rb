@@ -1,5 +1,6 @@
 module ResourceMQ
-  class Request < Message
+  class Request
+    include Message
     attribute :resource, String
     attribute :action, String
     attribute :headers, Hash

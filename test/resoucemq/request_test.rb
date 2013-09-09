@@ -1,5 +1,6 @@
 require 'test_helper'
-class ProductsHeader < ResourceMQ::Message
+class ProductsHeader
+  include ResourceMQ::Message
   attribute :remote_ip, String
   attribute :trace_id, Integer
 end

@@ -16,4 +16,5 @@ module ResourceMQ
   autoload :Request
   autoload :Message
   autoload :Response
+  autoload :Resource
 end

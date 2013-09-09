@@ -1,5 +1,6 @@
 module ResourceMQ
-  class Response < Message
+  class Response
+    include Message
     attribute :status, Integer
     attribute :message, Hash
     attribute :errors, Hash

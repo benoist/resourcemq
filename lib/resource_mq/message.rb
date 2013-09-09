@@ -1,8 +1,10 @@
 module ResourceMQ
-  class Message
+  module Message
+    extend ActiveSupport::Concern
+
     include Virtus
 
-    class << self
+    module ClassMethods
       def has_many(name, klass)
         attribute name, Array[klass]
       end

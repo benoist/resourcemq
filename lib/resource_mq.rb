@@ -18,6 +18,7 @@ module ResourceMQ
   autoload :Message
   autoload :Response
   autoload :Resource
+  autoload :TestConnection
 
   module Controller
     extend ActiveSupport::Autoload
@@ -27,6 +28,5 @@ module ResourceMQ
     autoload :Responder
     autoload :Base
   end
-
-
 end
+

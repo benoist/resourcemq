@@ -18,5 +18,15 @@ module ResourceMQ
   autoload :Message
   autoload :Response
   autoload :Resource
-  autoload :Controller
+
+  module Controller
+    extend ActiveSupport::Autoload
+
+    autoload :Callbacks
+    autoload :Metal
+    autoload :Responder
+    autoload :Base
+  end
+
+
 end

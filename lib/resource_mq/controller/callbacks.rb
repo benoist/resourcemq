@@ -5,7 +5,9 @@ module ResourceMQ
       include ActiveSupport::Callbacks
 
       included do
-        define_callbacks :process_action
+        define_callbacks :process_action,
+                         terminator: 'response',
+                         skip_after_callbacks_if_terminated: true
       end
 
       def process_action(*args)

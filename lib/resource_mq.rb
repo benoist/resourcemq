@@ -28,5 +28,13 @@ module ResourceMQ
     autoload :Responder
     autoload :Base
   end
+
+  autoload :Dispatcher
+
+  class Dispatcher
+    extend ActiveSupport::Autoload
+    autoload :Resource
+    autoload :Action
+  end
 end
 

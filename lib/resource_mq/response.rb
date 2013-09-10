@@ -1,5 +1,8 @@
 module ResourceMQ
   class Response
+    class MessageKlassMissing < StandardError
+    end
+
     include Message
 
     attribute :status, Integer
@@ -7,7 +10,8 @@ module ResourceMQ
     attribute :errors, Hash
 
     def message
-      @_message ||= @message_klass ? @message_klass.new(@message) : @message
+      raise MessageKlassMissing.new unless @message_klass
+      @_message ||= @message_klass.new(@message)
     end
 
     def message_klass=(klass)

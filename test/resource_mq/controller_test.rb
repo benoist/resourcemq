@@ -1,7 +1,7 @@
 require 'test_helper'
 
 module Controller
-  class ProductModel< Struct.new(:name, :description)
+  class ProductModel < Struct.new(:name, :description)
     def attributes
       {name: name, description: description}
     end
@@ -48,6 +48,14 @@ module Controller
       @controller.send(:process_action, :index)
       assert_equal @response.status, 200
     end
+  end
+
+  class RespondWithTest < Minitest::Unit::TestCase
+    def setup
+      @request    = ResourceMQ::Request.new
+      @response   = ResourceMQ::Response.new
+      @controller = ProductsController.new(@request, @response)
+    end
 
     def test_respond_with_attributes
       @response.message_klass = Products
@@ -60,6 +68,14 @@ module Controller
       @response.message_klass = Product
       @controller.send(:respond_with, ProductModel.new('name', 'description'))
       assert_equal @response.message.name, 'name'
+    end
+
+    def test_status
+      @response.message_klass = Product
+      @controller.send(:respond_with, status: :success)
+      assert_equal @response.status, 200
+      @controller.send(:respond_with, status: :unprocessable_entity)
+      assert_equal @response.status, 422
     end
   end
 end

@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'resource_mq/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "resourcemq"
+  spec.name          = "resource_mq"
   spec.version       = ResourceMQ::VERSION
   spec.authors       = ["Benoist"]
   spec.email         = ["benoist.claassen@gmail.com"]

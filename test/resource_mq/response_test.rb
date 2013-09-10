@@ -17,6 +17,10 @@ module Response
 
     def test_message
       response = ResourceMQ::Response.new
+      assert_raises(ResourceMQ::Response::MessageKlassMissing) do
+        response.message
+      end
+      response = ResourceMQ::Response.new
       response.message_klass = Products
 
       response.message.attributes = { name: 'product_name' }

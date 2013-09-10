@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    resourcemq (0.0.1)
+    resource_mq (0.0.1)
       activemodel (~> 4.0)
       activesupport (~> 4.0)
       virtus (~> 0.5)
@@ -51,4 +51,4 @@ DEPENDENCIES
   minitest (~> 4.7)
   minitest-reporters
   rake
-  resourcemq!
+  resource_mq!

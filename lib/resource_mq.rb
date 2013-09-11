@@ -1,8 +1,9 @@
-require "resource_mq/version"
-require "active_support/all"
-require "virtus"
-require "forwardable"
+require 'resource_mq/version'
+require 'active_support/all'
+require 'virtus'
+require 'forwardable'
 require 'active_model'
+require 'ffi-rzmq'
 
 
 module ResourceMQ
@@ -14,6 +15,7 @@ module ResourceMQ
   autoload :Resource
   autoload :TestConnection
   autoload :Connection
+  autoload :Server
 
   module Controller
     extend ActiveSupport::Autoload

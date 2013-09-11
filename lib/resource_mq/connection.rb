@@ -16,7 +16,7 @@ module ResourceMQ
     def response(response_klass)
       @connection_response               = ResourceMQ::Response.new(message: {})
       @connection_response.message_klass = response_klass
-      @connection_response.message
+      @connection_response
     end
   end
 end

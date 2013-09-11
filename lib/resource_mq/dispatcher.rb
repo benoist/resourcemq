@@ -1,23 +1,38 @@
 module ResourceMQ
   class Dispatcher
+    attr_internal :request
+
     class << self
-      def resources(&block)
-        instance_exec &block
+      def dispatch(request)
+        new(request).dispatch
       end
+    end
 
-      def resource(name, &block)
-        register_resource(name, Resource.register(name, &block))
-      end
+    def initialize(request)
+      @_request = request
+    end
 
-      def registered_resources
-        @_registered_resources ||= {}
-      end
+    def dispatch
+      controller.request = request
+      controller.process(action)
+    end
 
-      private
+    def controller
+      @_controller ||= controller_klass.new
+    end
 
-      def register_resource(name, resource)
-        registered_resources[name] = resource
-      end
+    private
+
+    def controller_klass
+      @_controller_klass ||= controller_name.safe_constantize || raise("Controller #{controller_name} not found")
+    end
+
+    def controller_name
+      "#{request.resource.camelize}Controller"
+    end
+
+    def action
+      request.action
     end
   end
 end

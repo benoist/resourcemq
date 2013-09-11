@@ -3,7 +3,7 @@ module ResourceMQ
     module Metal
       attr_accessor :request, :response, :action_name
 
-      delegate :params, :attributes, :headers, to: :request
+      delegate :params, :headers, to: :request
 
       def process(action)
         @action_name = action.to_s
@@ -13,6 +13,10 @@ module ResourceMQ
 
       def process_action(action)
         self.__send__(action)
+      end
+
+      def attributes
+        request.resource_attributes
       end
     end
   end

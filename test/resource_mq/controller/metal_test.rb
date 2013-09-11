@@ -16,7 +16,7 @@ module Controller
       end
 
       def test_request_delegations
-        assert_equal @controller.attributes, @request.attributes
+        assert_equal @controller.attributes, @request.resource_attributes
         assert_equal @controller.params, @request.params
         assert_equal @controller.headers, @request.headers
       end

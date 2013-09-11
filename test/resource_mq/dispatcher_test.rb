@@ -1,26 +1,28 @@
 require 'test_helper'
 
 module Dispatcher
-  class Dispatcher1 < ResourceMQ::Dispatcher
-  end
+  class ProductsController
+    def request=(request)
+      @request = request
+    end
 
-  Dispatcher1.resources do
-    resource :products do
-      attribute :name, String
-      attribute :price_in_cents, Integer
+    def request
+      @request
+    end
+
+    def process(action_name)
+      "processed: #{action_name}"
     end
   end
 
   class DispatcherTest < ActiveSupport::TestCase
-    def test_resource
-      assert_includes Dispatcher1.registered_resources, :products
-      assert_kind_of ResourceMQ::Dispatcher::Resource, Dispatcher1.registered_resources[:products]
+    def test_dispatch
+      request = ResourceMQ::Request.new(resource: 'dispatcher/products', action: 'index')
+      dispatcher = ResourceMQ::Dispatcher.new(request)
+      response = dispatcher.dispatch
 
-      resource = Dispatcher1.registered_resources[:products]
-      resource.attributes = {name: 'iMac', price_in_cents: '100'}
-
-      assert_equal resource.name, 'iMac'
-      assert_equal resource.price_in_cents, 100
+      assert_equal response, 'processed: index'
+      assert_equal dispatcher.controller.request, request
     end
   end
 end

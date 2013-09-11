@@ -1,0 +1,2 @@
+backend_rails: sh -c 'cd ./backend_rails/ && bin/rails s Puma -e production --port=3001'
+frontend: sh -c 'cd ./frontend/ && bin/rails s Puma -e production --port=3000'

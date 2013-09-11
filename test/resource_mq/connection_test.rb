@@ -15,7 +15,7 @@ module ResourceMQ
     def test_new_connection
       assert_equal 'index', @connection.connection_request.action
       assert_equal @params, @connection.connection_request.params
-      assert_instance_of ResponseDummy, @response
+      assert_instance_of ResponseDummy, @response.message
     end
   end
 end

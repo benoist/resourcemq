@@ -7,14 +7,16 @@ module ResourceMQ
   end
 
   class ResourceDummy
+    extend  ActiveModel::Naming
+    extend  ActiveModel::Translation
+    include ActiveModel::Conversion
     include Virtus
 
-    attribute :name, String
-    attribute :description, String
-    attribute :price_in_cents, Integer
-    attribute :published_at, Time
-
     def initialize(option = {})
+    end
+
+    def errors
+      @errors ||= ActiveModel::Errors.new(self)
     end
   end
 
@@ -95,6 +97,24 @@ module ResourceMQ
       product = Product.new(params)
       assert_instance_of ResourceDummy, product.create
     end
+
+    def test_response_status
+      params = {
+        name: nil,
+        description: 'Sugar water',
+        price_in_cents: '250',
+        published_at: Time.now
+      }
+      product = Product.new(params)
+      stubbed_response = ResourceMQ::Response.new(errors: {name: 'absent'})
+      ResourceMQ::Response.stub 'new', stubbed_response do
+        product = product.create
+        assert_instance_of ResourceDummy, product
+        refute_nil product.errors
+        assert_equal ["absent"], product.errors.messages[:name]
+      end
+    end
+
   end
 
   class ComplianceTest < MiniTest::Unit::TestCase
@@ -102,6 +122,10 @@ module ResourceMQ
 
     def setup
       @model = Product.new
+    end
+
+    # remove this test from the Lint tests
+    def test_persisted?
     end
   end
 end

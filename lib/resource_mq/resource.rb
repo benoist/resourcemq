@@ -6,7 +6,9 @@ module ResourceMQ
     end
 
     include Virtus
-    include ActiveModel::Model
+    extend  ActiveModel::Naming
+    extend  ActiveModel::Translation
+    include ActiveModel::Conversion
 
     class << self
       def resources(resource_name, &block)
@@ -41,9 +43,18 @@ module ResourceMQ
         method_contents = block.call
 
         if @_attributes && @_attributes[@_action]
-          define_method(name) do |attributes = {}|
+          define_method('load_errors') do |response|
+            response.errors.each do |key, value|
+              response.message.errors.set(key, [value])
+            end
+          end
+
+          define_method(name) do
+            action = name
             connection = Connection.request(name.to_sym)
-            connection.response(response_klass[:responds_with])
+            response = connection.response(response_klass[:responds_with])
+            load_errors(response)
+            response.message
           end
         else
           self.class.instance_eval do
@@ -51,7 +62,7 @@ module ResourceMQ
               action = name
               valid_params?(action, params)
               connection = Connection.request(name.to_sym, params: params)
-              connection.response(response_klass[:responds_with])
+              connection.response(response_klass[:responds_with]).message
             end
           end
         end
@@ -77,6 +88,10 @@ module ResourceMQ
           result
         end
       end
+    end
+
+    def errors
+      @errors ||= ActiveModel::Errors.new(self)
     end
   end
 end

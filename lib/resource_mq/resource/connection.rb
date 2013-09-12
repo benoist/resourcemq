@@ -53,11 +53,15 @@ module ResourceMQ
         protected
 
         def handle_response(response, respond_with)
-          if respond_with
+          if respond_with.nil?
+            klass = self
+          elsif respond_with.is_a?(String)
             class_name = "#{self.name}/#{respond_with}".camelize
             klass      = class_name.safe_constantize
+          elsif respond_with <= Message
+            klass = respond_with
           else
-            klass = self
+            raise InvalidResponseClass.new("#{class_name} is not a Message")
           end
 
           raise InvalidResponseClass.new("#{class_name} does not exists") unless klass

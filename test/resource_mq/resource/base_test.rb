@@ -19,13 +19,4 @@ module Resource
       assert Product.method_defined?(:id)
     end
   end
-
-  class ComplianceTest < MiniTest::Unit::TestCase
-    include ActiveModel::Lint::Tests
-
-    def setup
-      @model    = Product.new
-      @model.id = 1
-    end
-  end
 end

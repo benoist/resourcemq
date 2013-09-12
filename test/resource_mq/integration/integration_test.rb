@@ -25,7 +25,7 @@ module Integration
 
     class << self
       def index(params = {})
-        request(:index, params: params, respond_with: :products)
+        request(:index, params: params, respond_with: Product::Products)
       end
 
       def show(id)
@@ -65,14 +65,6 @@ module Integration
       assert_equal product.name, 'name'
       assert_equal product.description, 'description'
       assert_equal product.price_in_cents, 100
-    end
-  end
-
-  class ComplianceTest < MiniTest::Unit::TestCase
-    include ActiveModel::Lint::Tests
-
-    def setup
-      @model = Product.new
     end
   end
 end

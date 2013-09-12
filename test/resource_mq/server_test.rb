@@ -6,9 +6,7 @@ module Server
       def dispatch(request)
         @request = request
 
-        response = ResourceMQ::Response.new(status: 200, message: {})
-        response.message_klass = Class.new(ResourceMQ::Resource)
-        response
+        {status: 200, message: {}, errors: {}}
       end
 
       def request
@@ -34,8 +32,7 @@ module Server
         @response = server.handle_request(request)
       end
 
-      assert_kind_of ResourceMQ::Request, dispatcher.request
-      assert_equal @response, {status: 200, message: {}, errors: {}}.to_json
+      assert_equal @response, {status: 200, message: {}, errors: {}}
     end
   end
 end

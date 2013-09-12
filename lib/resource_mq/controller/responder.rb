@@ -13,10 +13,10 @@ module ResourceMQ
       end
 
       def respond_with(*args)
-        options    = args.extract_options!
-        status     = status_code(options.delete(:status))
-        errors     = options.delete(:errors) || {}
-        model      = args.first
+        options = args.extract_options!
+        status  = status_code(options.delete(:status))
+        errors  = options.delete(:errors) || {}
+        model   = args.first
 
         if model.respond_to?(:attributes)
           attributes = model.attributes
@@ -24,9 +24,11 @@ module ResourceMQ
           attributes = options
         end
 
-        response.status             = status
-        response.errors             = errors
-        response.message.attributes = attributes
+        {
+            status:  status,
+            message: attributes,
+            errors:  errors
+        }
       end
     end
   end

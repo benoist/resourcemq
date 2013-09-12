@@ -29,30 +29,39 @@ module Controller
 
     class ResponderTest < ActiveSupport::TestCase
       def setup
-        @controller          = ProductsController.new
-        @controller.request  = @request = ResourceMQ::Request.new
-        @controller.response = @response = ResourceMQ::Response.new
+        @controller = ProductsController.new
       end
 
       def test_respond_with_attributes
-        @response.message_klass = Products
-        @controller.send(:respond_with, page: 1, total: 1)
-        assert_equal @response.message.page, 1
-        assert_equal @response.message.total, 1
+        response = @controller.send(:respond_with, page: 1, total: 1)
+
+        assert_equal response, {
+            status:  200,
+            message: {
+                page:  1,
+                total: 1
+            },
+            errors:  {}
+        }
       end
 
       def test_respond_with_model
-        @response.message_klass = Product
-        @controller.send(:respond_with, ProductModel.new('name', 'description'))
-        assert_equal @response.message.name, 'name'
+        response = @controller.send(:respond_with, ProductModel.new('name', 'description'))
+        assert_equal response, {
+            status:  200,
+            message: {
+                name:        'name',
+                description: 'description'
+            },
+            errors:  {}
+        }
       end
 
       def test_status
-        @response.message_klass = Product
-        @controller.send(:respond_with, status: :success)
-        assert_equal @response.status, 200
-        @controller.send(:respond_with, status: :unprocessable_entity)
-        assert_equal @response.status, 422
+        response = @controller.send(:respond_with, status: :success)
+        assert_equal response[:status], 200
+        response = @controller.send(:respond_with, status: :unprocessable_entity)
+        assert_equal response[:status], 422
       end
     end
   end

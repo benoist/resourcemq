@@ -13,9 +13,13 @@ module ResourceMQ
   autoload :Message
   autoload :Response
   autoload :Resource
-  autoload :TestConnection
-  autoload :Connection
   autoload :Server
+
+  module Client
+    extend ActiveSupport::Autoload
+
+    autoload :Test
+  end
 
   module Controller
     extend ActiveSupport::Autoload
@@ -27,11 +31,5 @@ module ResourceMQ
   end
 
   autoload :Dispatcher
-
-  class Dispatcher
-    extend ActiveSupport::Autoload
-    autoload :Resource
-    autoload :Action
-  end
 end
 

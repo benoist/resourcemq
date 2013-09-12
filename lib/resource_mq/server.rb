@@ -1,25 +1,15 @@
 module ResourceMQ
   class Server
-    def handle_request(data)
-      request = ResourceMQ::Request.new(decode(data))
+    def handle_request(request)
       response = dispatcher.dispatch(request)
-
       process_response(response)
     end
 
     def process_response(response)
-      encode(response.attributes)
+      response
     end
 
     private
-
-    def encode(hash)
-      hash.to_json
-    end
-
-    def decode(data)
-      JSON.parse(data)
-    end
 
     def dispatcher
       ResourceMQ::Dispatcher

@@ -30,6 +30,7 @@ module Resource
 
     def setup
       @model = Product.new
+      @model.id = 1
     end
   end
 end

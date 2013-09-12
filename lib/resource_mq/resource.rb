@@ -35,6 +35,7 @@ module ResourceMQ
       def connection=(connection)
         @connection = connection
       end
+
       def connection
         if self != Resource
           superclass.connection
@@ -46,6 +47,14 @@ module ResourceMQ
 
     def errors
       @errors ||= ActiveModel::Errors.new(self)
+    end
+
+    def persisted?
+      id.present?
+    end
+
+    def to_key
+      persisted? ? id : nil
     end
   end
 end

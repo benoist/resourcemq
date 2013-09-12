@@ -5,107 +5,72 @@ $: << 'lib'
 ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../frontend/config/environment", __FILE__)
 
-require 'minitest/autorun'
-require 'minitest/reporters'
 require 'resource_mq'
-require 'open3'
+#require 'benchmark'
 
-MiniTest::Reporters.use!
+#output                                                                          = `wrk -d 10s  http://127.0.0.1:3000/products.json`
+#lines                                                                           = output.split('\n')
+#latency_arr                                                                     = lines.grep(/    Latency/).split
+# Thread Stats   Avg     Stdev        Max       +/- Stdev
+# ["Latency"    ,"378.95ms" ,"507.94ms"  ,"1.13s"  ,"68.45%"]
+# ["Req/Sec"    , "84.32"   ,"61.05"     ,"194.00" ,"61.90%"]
+#req_sec_label, req_sec_avg, req_sec_stdev, req_sec_max, req_sec_stdevpercentage = lines.grep(/    Req\/Sec/).first.split
 
-require 'benchmark'
 
-#class ActiveResourceRailsBenchmark
-#  def bench_hello_world
-#    backend_rails_root = File.expand_path("../backend_rails", __FILE__)
-#    #stdin, mstdout, stderr, wait_thr = Open3.popen3("bundle", "exec", "rails", "server", "--port=3000", :chdir => File.join(backend_rails_root, 'bin'))
-#    output = ''
-#    input = ''
-#
-#    xyz_pid = fork do
-#      system("bundle", "exec", "rails", "server", "--port=3000",
-#             :chdir => File.join(backend_rails_root, 'bin'),
-#             :out   => output,
-#             :err   => input)
-#    end
-#
-#
-#    #begin
-#    #Timeout.timeout(15) do
-#    print "Starting backend rails server..."
-#    puts "--- before while"
-#    loop do
-#      print "."
-#
-#      #puts "> @mystderr.readlines"
-#      #backend_server_errput = mystderr.readlines
-#      #puts "ERRPUT: #{backend_server_errput}"
-#      #puts "< @mystderr.readlines"
-#
-#      #puts "> @stdout.readlines"
-#      #backend_server_errput = mystderr.readlines
-#      #backend_server_output = mstdout.readlines
-#      #puts "OUTPUT: #{backend_server_output}"
-#      #puts "< @stdout.readlines"
-#
-#      puts "output = #{output}"
-#
-#      #break if backend_server_output.grep(/STARTED123/).any?
-#      sleep 0.1
-#      print "."
-#    end
-#
-#    puts "--- end while"
-#
-#    if wait_thr.alive?
-#      puts "it started baby!!"
-#    else
-#      puts "it DIDN't started!!"
-#    end
-#    #end
-#    #rescue Timeout::Error
-#    #  puts "KILLED!!!"
-#    #  Process.kill(9, wait_thr.pid)
-#    #end
-#
-#    puts "Waiting ..."
-#    #@wait_thr.wait
-#
-#    #Process.kill("TERM", @wait_thr.pid) if @wait_thr.alive?
-#
-#    #puts "----"
-#    #
-#    #puts Benchmark.measure {
-#    #  "a"*1_000_000
-#    #}
-#    #puts "----"
-#  end
-#end
-#ActiveResourceRailsBenchmark.new.bench_hello_world
+require 'net/http'
+require 'uri'
 
-$stdout.sync = true
-stdin, stdout, stderr, wait_thr = 1,1,1,1
+FRONTEND_URI      = ['frontend', URI.parse("http://127.0.0.1:3000/ready")]
+BACKEND_RAILS_URI = ['backend_rails', URI.parse("http://127.0.0.1:3001/ready")]
 
-Bundler.with_clean_env do
-    backend_rails_root = File.expand_path("../backend_rails", __FILE__)
-    system("bundle", "exec", "rails", "server", "--port=3000", "--environment=production", :chdir => File.join(backend_rails_root, 'bin'))
-
-    loop do
-      puts "."
-      #puts "stdout: #{stdout}"
-      #stdout.readline()
-
-      #r, _, e = IO.select([stdout],[],[stderr],1)
-      #puts "r: #{r}"
-      #if r && r.size == 1
-      #  puts "r.first.readlines: #{r.first.readlines}"
-      #end
-      #puts "e: #{e}"
-      puts "."
-
-      sleep 1
+def all_benchmark_apps_running?
+  apps = [FRONTEND_URI, BACKEND_RAILS_URI]
+  apps.each do |app_name, app_uri|
+    response = ''
+    http     = Net::HTTP.new(app_uri.host, app_uri.port)
+    begin
+      response = http.request(Net::HTTP::Get.new(app_uri.request_uri)).body
+      puts "app_uri #{app_name} : '#{response}'"
+    rescue Errno::ECONNREFUSED
+      puts "#{app_name} connection refused"
     end
-
-    puts "EOF"
+    puts "== #{response} != #{app_name} ready"
+    return false if (response != "#{app_name} ready")
+  end
+  true
 end
 
+puts "starting foreman which starts all benchmark apps..."
+foreman_thread_pid = fork do
+  Bundler.with_clean_env do
+    foreman_pid = Process.spawn("foreman", "start", chdir: File.expand_path("..", __FILE__))
+    Signal.trap("TERM") { Process.kill("INT", foreman_pid) }
+    Process.wait(foreman_pid)
+  end
+end
 
+puts "are all benchmark apps running?"
+while not all_benchmark_apps_running? do
+  sleep 0.1
+  print "."
+end
+
+#puts 'warming up...'
+#output      = `wrk -d 2s  http://127.0.0.1:3000/products.json`
+
+puts 'running directly against backend_rails...'
+output      = `wrk -d 5s  http://127.0.0.1:3001/products.json`
+puts "output:"
+puts output
+
+puts 'running against backend_rails...'
+output      = `wrk -d 5s  http://127.0.0.1:3000/products.json`
+lines       = output.split('\n')
+latency_arr = lines.grep(/    Latency/).split
+puts "output:"
+puts output
+puts
+
+puts "KILLING foreman..."
+kill_output = Process.kill("TERM", foreman_thread_pid)
+Process.wait(foreman_thread_pid)

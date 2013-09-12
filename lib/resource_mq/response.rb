@@ -1,8 +1,5 @@
 module ResourceMQ
   class Response
-    class MessageKlassMissing < StandardError
-    end
-
     include Message
 
     attribute :status, Integer

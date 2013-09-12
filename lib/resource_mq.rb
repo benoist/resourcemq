@@ -11,8 +11,8 @@ module ResourceMQ
 
   autoload :Request
   autoload :Message
+  autoload :Collection
   autoload :Response
-  autoload :Resource
   autoload :Server
 
   module Client
@@ -28,6 +28,14 @@ module ResourceMQ
     autoload :Metal
     autoload :Responder
     autoload :Base
+  end
+
+  module Resource
+    extend ActiveSupport::Autoload
+
+    autoload :Base
+    autoload :Builder
+    autoload :Connection
   end
 
   autoload :Dispatcher

@@ -1,7 +1,6 @@
 module ResourceMQ
   module Message
     extend ActiveSupport::Concern
-
     include Virtus
 
     module ClassMethods

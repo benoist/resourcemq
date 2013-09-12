@@ -1,10 +1,10 @@
 require 'test_helper'
 
 module Resource
-  class Product < ResourceMQ::Resource
+  class Product < ResourceMQ::Resource::Base
   end
 
-  class ResourceTest < MiniTest::Unit::TestCase
+  class ResourceTest < ActiveSupport::TestCase
     def setup
       @model = Product.new
     end
@@ -13,11 +13,6 @@ module Resource
       assert_equal Product.resource_name, 'resource/products'
       Product.resources(:fancy_products)
       assert_equal Product.resource_name, 'fancy_products'
-    end
-
-    def test_connection
-      ResourceMQ::Resource.connection = 'new_connection'
-      assert_equal Product.connection, 'new_connection'
     end
 
     def test_id
@@ -29,7 +24,7 @@ module Resource
     include ActiveModel::Lint::Tests
 
     def setup
-      @model = Product.new
+      @model    = Product.new
       @model.id = 1
     end
   end

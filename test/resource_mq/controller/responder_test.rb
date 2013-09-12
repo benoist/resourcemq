@@ -35,25 +35,17 @@ module Controller
       def test_respond_with_attributes
         response = @controller.send(:respond_with, page: 1, total: 1)
 
-        assert_equal response, {
-            status:  200,
-            message: {
-                page:  1,
-                total: 1
-            },
-            errors:  {}
+        assert_equal response.message, {
+            page:  1,
+            total: 1
         }
       end
 
       def test_respond_with_model
         response = @controller.send(:respond_with, ProductModel.new('name', 'description'))
-        assert_equal response, {
-            status:  200,
-            message: {
-                name:        'name',
-                description: 'description'
-            },
-            errors:  {}
+        assert_equal response.message, {
+            name:        'name',
+            description: 'description'
         }
       end
 

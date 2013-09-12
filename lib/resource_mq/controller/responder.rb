@@ -24,11 +24,11 @@ module ResourceMQ
           attributes = options
         end
 
-        {
+        ResourceMQ::Response.new(
             status:  status,
             message: attributes,
             errors:  errors
-        }
+        )
       end
     end
   end

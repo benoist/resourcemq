@@ -1,16 +1,6 @@
 require 'test_helper'
 
 module Integration
-  class ProductsController < ResourceMQ::Controller::Base
-    def index
-      respond_with page: 1, total: 1, items: [{id: 1, name: 'name', description: 'description', price_in_cents: 100}]
-    end
-
-    def show
-      respond_with id: 1, name: 'name', description: 'description', price_in_cents: 100
-    end
-  end
-
   class Product < ResourceMQ::Resource::Base
     attribute :name, String
     attribute :description, String
@@ -21,6 +11,10 @@ module Integration
       attribute :total, Integer
 
       has_many :items, Product
+    end
+
+    collection do
+      action :index, respond_with: Product::Products
     end
 
     class << self
@@ -38,7 +32,17 @@ module Integration
     end
   end
 
-  class IntegrationTest < ActiveSupport::TestCase
+  class ProductsController < ResourceMQ::Controller::Base
+    def index
+      respond_with page: 1, total: 1, items: [{id: 1, name: 'name', description: 'description', price_in_cents: 100}]
+    end
+
+    def show
+      respond_with id: 1, name: 'name', description: 'description', price_in_cents: 100
+    end
+  end
+
+  class RountripTest < ActiveSupport::TestCase
     def setup
       server                                = ResourceMQ::Server.new
       ResourceMQ::Resource::Base.connection = ResourceMQ::Client::Test.new(server)

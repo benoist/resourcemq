@@ -1,11 +1,6 @@
 module ResourceMQ
   module Resource
     class Base
-      class ParamNotPermitted < StandardError
-      end
-      class ParamTypeMismatch < StandardError
-      end
-
       include Virtus
       extend ActiveModel::Naming
       extend ActiveModel::Translation

@@ -36,6 +36,7 @@ module ResourceMQ
     autoload :Base
     autoload :Builder
     autoload :Connection
+    autoload :Action
   end
 
   autoload :Dispatcher

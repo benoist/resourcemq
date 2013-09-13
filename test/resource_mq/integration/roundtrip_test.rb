@@ -19,10 +19,8 @@ module Integration
       end
     end
 
-    class << self
-      def show(id)
-        request(:show, params: {id: id})
-      end
+    member do
+      action :show
     end
 
     def reload
@@ -63,6 +61,16 @@ module Integration
     end
 
     def test_member_method
+      product    = Product.new
+      product.id = 1
+      product.show
+
+      assert_equal product.name, 'name'
+      assert_equal product.description, 'description'
+      assert_equal product.price_in_cents, 100
+    end
+
+    def test_custom_method
       product    = Product.new
       product.id = 1
       product.reload

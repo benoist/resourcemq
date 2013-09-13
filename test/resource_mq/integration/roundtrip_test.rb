@@ -14,14 +14,12 @@ module Integration
     end
 
     collection do
-      action :index, respond_with: Product::Products
+      action :index, respond_with: Product::Products do
+        param :page, Integer
+      end
     end
 
     class << self
-      def index(params = {})
-        request(:index, params: params, respond_with: Product::Products)
-      end
-
       def show(id)
         request(:show, params: {id: id})
       end
@@ -34,7 +32,8 @@ module Integration
 
   class ProductsController < ResourceMQ::Controller::Base
     def index
-      respond_with page: 1, total: 1, items: [{id: 1, name: 'name', description: 'description', price_in_cents: 100}]
+      respond_with page: 1, total: 2, items: [{id: 1, name: 'name', description: 'description', price_in_cents: 100},
+                                              {id: 2, name: 'name', description: 'description', price_in_cents: 100}]
     end
 
     def show
@@ -51,8 +50,10 @@ module Integration
     def test_collection_method
       response = Product.index(page: 1)
 
-      assert_equal response.page, 1
-      assert_equal response.total, 1
+      assert_equal 1, response.page
+      assert_equal 2, response.total
+      assert_instance_of Product, response.items.first
+      assert_instance_of Product, response.items.last
 
       product = response.items.first
       assert_equal product.id, 1

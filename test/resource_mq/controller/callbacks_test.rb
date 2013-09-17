@@ -1,246 +1,250 @@
 require 'test_helper'
 
-module Controller
-  module Callbacks
-    class ControllerWithCallbacks < ResourceMQ::Controller::Base
-    end
+module ResourceMQ
+  module Controller
+    module Callbacks
+      module Testing
+        class ControllerWithCallbacks < ResourceMQ::Controller::Base
+        end
 
-    class Callback1 < ControllerWithCallbacks
-      set_callback :process_action, :before, :first
+        class Callback1 < ControllerWithCallbacks
+          set_callback :process_action, :before, :first
 
-      def first
-        @text = "Hello world"
-      end
+          def first
+            @text = "Hello world"
+          end
 
-      def index
-        self.response = @text
-      end
-    end
+          def index
+            self.response = @text
+          end
+        end
 
-    class TestCallbacks1 < ActiveSupport::TestCase
-      test "basic callbacks work" do
-        controller = Callback1.new
-        controller.process(:index)
-        assert_equal "Hello world", controller.response
-      end
-    end
+        class TestCallbacks1 < ActiveSupport::TestCase
+          test "basic callbacks work" do
+            controller = Callback1.new
+            controller.process(:index)
+            assert_equal "Hello world", controller.response
+          end
+        end
 
-    class Callback2 < ControllerWithCallbacks
-      before_action :first
-      after_action :second
-      around_action :aroundz
+        class Callback2 < ControllerWithCallbacks
+          before_action :first
+          after_action :second
+          around_action :aroundz
 
-      def first
-        @text = "Hello world"
-      end
+          def first
+            @text = "Hello world"
+          end
 
-      def second
-        @second = "Goodbye"
-      end
+          def second
+            @second = "Goodbye"
+          end
 
-      def aroundz
-        @aroundz = "FIRST"
-        yield
-        @aroundz << "SECOND"
-      end
+          def aroundz
+            @aroundz = "FIRST"
+            yield
+            @aroundz << "SECOND"
+          end
 
-      def index
-        @text              ||= nil
-        self.response = @text.to_s
-      end
-    end
+          def index
+            @text         ||= nil
+            self.response = @text.to_s
+          end
+        end
 
-    class Callback2Overwrite < Callback2
-      before_action :first, except: :index
-    end
+        class Callback2Overwrite < Callback2
+          before_action :first, except: :index
+        end
 
-    class TestCallbacks2 < ActiveSupport::TestCase
-      def setup
-        @controller = Callback2.new
-      end
+        class TestCallbacks2 < ActiveSupport::TestCase
+          def setup
+            @controller = Callback2.new
+          end
 
-      test "before_action works" do
-        @controller.process(:index)
-        assert_equal "Hello world", @controller.response
-      end
+          test "before_action works" do
+            @controller.process(:index)
+            assert_equal "Hello world", @controller.response
+          end
 
-      test "after_action works" do
-        @controller.process(:index)
-        assert_equal "Goodbye", @controller.instance_variable_get("@second")
-      end
+          test "after_action works" do
+            @controller.process(:index)
+            assert_equal "Goodbye", @controller.instance_variable_get("@second")
+          end
 
-      test "around_action works" do
-        @controller.process(:index)
-        assert_equal "FIRSTSECOND", @controller.instance_variable_get("@aroundz")
-      end
+          test "around_action works" do
+            @controller.process(:index)
+            assert_equal "FIRSTSECOND", @controller.instance_variable_get("@aroundz")
+          end
 
-      test "before_action with overwritten condition" do
-        @controller = Callback2Overwrite.new
-        @controller.process(:index)
-        assert_equal "", @controller.response
-      end
-    end
+          test "before_action with overwritten condition" do
+            @controller = Callback2Overwrite.new
+            @controller.process(:index)
+            assert_equal "", @controller.response
+          end
+        end
 
-    class Callback3 < ControllerWithCallbacks
-      before_action do |c|
-        c.instance_variable_set("@text", "Hello world")
-      end
+        class Callback3 < ControllerWithCallbacks
+          before_action do |c|
+            c.instance_variable_set("@text", "Hello world")
+          end
 
-      after_action do |c|
-        c.instance_variable_set("@second", "Goodbye")
-      end
+          after_action do |c|
+            c.instance_variable_set("@second", "Goodbye")
+          end
 
-      def index
-        self.response = @text
-      end
-    end
+          def index
+            self.response = @text
+          end
+        end
 
-    class TestCallbacks3 < ActiveSupport::TestCase
-      def setup
-        @controller = Callback3.new
-      end
+        class TestCallbacks3 < ActiveSupport::TestCase
+          def setup
+            @controller = Callback3.new
+          end
 
-      test "before_action works with procs" do
-        @controller.process(:index)
-        assert_equal "Hello world", @controller.response
-      end
+          test "before_action works with procs" do
+            @controller.process(:index)
+            assert_equal "Hello world", @controller.response
+          end
 
-      test "after_action works with procs" do
-        @controller.process(:index)
-        assert_equal "Goodbye", @controller.instance_variable_get("@second")
-      end
-    end
+          test "after_action works with procs" do
+            @controller.process(:index)
+            assert_equal "Goodbye", @controller.instance_variable_get("@second")
+          end
+        end
 
-    class CallbacksWithConditions < ControllerWithCallbacks
-      before_action :list, :only => :index
-      before_action :authenticate, :except => :index
+        class CallbacksWithConditions < ControllerWithCallbacks
+          before_action :list, :only => :index
+          before_action :authenticate, :except => :index
 
-      def index
-        self.response = @list.join(", ")
-      end
+          def index
+            self.response = @list.join(", ")
+          end
 
-      def sekrit_data
-        self.response = (@list + [@authenticated]).join(", ")
-      end
+          def sekrit_data
+            self.response = (@list + [@authenticated]).join(", ")
+          end
 
-      private
-      def list
-        @list = ["Hello", "World"]
-      end
+          private
+          def list
+            @list = ["Hello", "World"]
+          end
 
-      def authenticate
-        @list          ||= []
-        @authenticated = "true"
-      end
-    end
+          def authenticate
+            @list          ||= []
+            @authenticated = "true"
+          end
+        end
 
-    class TestCallbacksWithConditions < ActiveSupport::TestCase
-      def setup
-        @controller = CallbacksWithConditions.new
-      end
+        class TestCallbacksWithConditions < ActiveSupport::TestCase
+          def setup
+            @controller = CallbacksWithConditions.new
+          end
 
-      test "when :only is specified, a before action is triggered on that action" do
-        @controller.process(:index)
-        assert_equal "Hello, World", @controller.response
-      end
+          test "when :only is specified, a before action is triggered on that action" do
+            @controller.process(:index)
+            assert_equal "Hello, World", @controller.response
+          end
 
-      test "when :only is specified, a before action is not triggered on other actions" do
-        @controller.process(:sekrit_data)
-        assert_equal "true", @controller.response
-      end
+          test "when :only is specified, a before action is not triggered on other actions" do
+            @controller.process(:sekrit_data)
+            assert_equal "true", @controller.response
+          end
 
-      test "when :except is specified, an after action is not triggered on that action" do
-        @controller.process(:index)
-        assert !@controller.instance_variable_defined?("@authenticated")
-      end
-    end
+          test "when :except is specified, an after action is not triggered on that action" do
+            @controller.process(:index)
+            assert !@controller.instance_variable_defined?("@authenticated")
+          end
+        end
 
-    class CallbacksWithArrayConditions < ControllerWithCallbacks
-      before_action :list, only: [:index, :listy]
-      before_action :authenticate, except: [:index, :listy]
+        class CallbacksWithArrayConditions < ControllerWithCallbacks
+          before_action :list, only: [:index, :listy]
+          before_action :authenticate, except: [:index, :listy]
 
-      def index
-        self.response = @list.join(", ")
-      end
+          def index
+            self.response = @list.join(", ")
+          end
 
-      def sekrit_data
-        self.response = (@list + [@authenticated]).join(", ")
-      end
+          def sekrit_data
+            self.response = (@list + [@authenticated]).join(", ")
+          end
 
-      private
-      def list
-        @list = ["Hello", "World"]
-      end
+          private
+          def list
+            @list = ["Hello", "World"]
+          end
 
-      def authenticate
-        @list          = []
-        @authenticated = "true"
-      end
-    end
+          def authenticate
+            @list          = []
+            @authenticated = "true"
+          end
+        end
 
-    class TestCallbacksWithArrayConditions < ActiveSupport::TestCase
-      def setup
-        @controller = CallbacksWithArrayConditions.new
-      end
+        class TestCallbacksWithArrayConditions < ActiveSupport::TestCase
+          def setup
+            @controller = CallbacksWithArrayConditions.new
+          end
 
-      test "when :only is specified with an array, a before action is triggered on that action" do
-        @controller.process(:index)
-        assert_equal "Hello, World", @controller.response
-      end
+          test "when :only is specified with an array, a before action is triggered on that action" do
+            @controller.process(:index)
+            assert_equal "Hello, World", @controller.response
+          end
 
-      test "when :only is specified with an array, a before action is not triggered on other actions" do
-        @controller.process(:sekrit_data)
-        assert_equal "true", @controller.response
-      end
+          test "when :only is specified with an array, a before action is not triggered on other actions" do
+            @controller.process(:sekrit_data)
+            assert_equal "true", @controller.response
+          end
 
-      test "when :except is specified with an array, an after action is not triggered on that action" do
-        @controller.process(:index)
-        assert !@controller.instance_variable_defined?("@authenticated")
-      end
-    end
+          test "when :except is specified with an array, an after action is not triggered on that action" do
+            @controller.process(:index)
+            assert !@controller.instance_variable_defined?("@authenticated")
+          end
+        end
 
-    class ChangedConditions < Callback2
-      before_action :first, :only => :index
+        class ChangedConditions < Callback2
+          before_action :first, :only => :index
 
-      def not_index
-        @text              ||= nil
-        self.response = @text.to_s
-      end
-    end
+          def not_index
+            @text         ||= nil
+            self.response = @text.to_s
+          end
+        end
 
-    class TestCallbacksWithChangedConditions < ActiveSupport::TestCase
-      def setup
-        @controller = ChangedConditions.new
-      end
+        class TestCallbacksWithChangedConditions < ActiveSupport::TestCase
+          def setup
+            @controller = ChangedConditions.new
+          end
 
-      test "when a callback is modified in a child with :only, it works for the :only action" do
-        @controller.process(:index)
-        assert_equal "Hello world", @controller.response
-      end
+          test "when a callback is modified in a child with :only, it works for the :only action" do
+            @controller.process(:index)
+            assert_equal "Hello world", @controller.response
+          end
 
-      test "when a callback is modified in a child with :only, it does not work for other actions" do
-        @controller.process(:not_index)
-        assert_equal "", @controller.response
-      end
-    end
+          test "when a callback is modified in a child with :only, it does not work for other actions" do
+            @controller.process(:not_index)
+            assert_equal "", @controller.response
+          end
+        end
 
-    class SetsResponseBody < ControllerWithCallbacks
-      before_action :set_body
+        class SetsResponseBody < ControllerWithCallbacks
+          before_action :set_body
 
-      def index
-        self.response = "Fail"
-      end
+          def index
+            self.response = "Fail"
+          end
 
-      def set_body
-        self.response = "Success"
-      end
-    end
+          def set_body
+            self.response = "Success"
+          end
+        end
 
-    class TestHalting < ActiveSupport::TestCase
-      test "when a callback sets the response body, the action should not be invoked" do
-        controller = SetsResponseBody.new
-        controller.process(:index)
-        assert_equal "Success", controller.response
+        class TestHalting < ActiveSupport::TestCase
+          test "when a callback sets the response body, the action should not be invoked" do
+            controller = SetsResponseBody.new
+            controller.process(:index)
+            assert_equal "Success", controller.response
+          end
+        end
       end
     end
   end

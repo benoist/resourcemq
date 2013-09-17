@@ -14,6 +14,8 @@ module ResourceMQ
   autoload :Collection
   autoload :Response
   autoload :Server
+  autoload :Service
+  autoload :Dispatcher
 
   module Client
     extend ActiveSupport::Autoload
@@ -39,6 +41,12 @@ module ResourceMQ
     autoload :Action
   end
 
-  autoload :Dispatcher
+  class Service
+    extend ActiveSupport::Autoload
+
+    autoload :Builder
+  end
+
+  mattr_accessor :service
 end
 

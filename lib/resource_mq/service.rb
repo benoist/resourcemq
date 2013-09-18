@@ -6,8 +6,8 @@ module ResourceMQ
       @resources = {}
     end
 
-    def register_resource(name)
-      @resources[name] = Builder.new(name)
+    def register_resource(name, &block)
+      @resources[name] = Resource.build(name, &block)
     end
   end
 end

@@ -44,7 +44,10 @@ module ResourceMQ
   class Service
     extend ActiveSupport::Autoload
 
-    autoload :Builder
+    autoload :Resource
+    autoload :Action
+    autoload :Response
+    autoload :CollectionResponse
   end
 
   mattr_accessor :service

@@ -16,7 +16,8 @@ module ResourceMQ
           service.register_resource(:products)
 
           assert_includes service.resources, :products
-          assert_kind_of Service::Builder, service.resources[:products]
+          assert_operator service.resources[:products], :<=, Service::Resource
+          assert_equal 'product', service.resources[:products].name
         end
       end
     end

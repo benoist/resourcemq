@@ -33,28 +33,28 @@ module ResourceMQ
 
     ResourceMQ.service = Service.new
 
-    ResourceMQ.service.register_resource :product do
-      attribute :name, String
-      attribute :description, String
-      attribute :price_in_cents, Integer
-
-      collection_response :products do
-        attribute :page, Integer
-        attribute :total, Integer
-
-        has_many :items, Product
-      end
-
-      collection do
-        action :index, respond_with: Product::Products do
-          param :page, Integer
-        end
-      end
-
-      member do
-        action :show
-      end
-    end
+    #ResourceMQ.service.register_resource :product do
+    #  attribute :name, String
+    #  attribute :description, String
+    #  attribute :price_in_cents, Integer
+    #
+    #  collection_response :products do
+    #    attribute :page, Integer
+    #    attribute :total, Integer
+    #
+    #    has_many :items, Product
+    #  end
+    #
+    #  collection do
+    #    action :index, respond_with: Product::Products do
+    #      param :page, Integer
+    #    end
+    #  end
+    #
+    #  member do
+    #    action :show
+    #  end
+    #end
 
     class ProductsController < Controller::Base
       def index
